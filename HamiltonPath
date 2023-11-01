@@ -1,1 +1,44 @@
 
+class Solution {
+  bool dfs(int s1, vector<int>adj[],vector<bool>&vis,set<int>&s,int n) {
+        vis[s1] = true;
+        s.insert(s1);
+
+        if (s.size() == n) {
+            return true; // All vertices have been visited
+        }
+        for (int v : adj[s1]) {
+            if (!vis[v]) {
+                if (dfs(v, adj, vis, s,n)) {
+                    return true;
+                }
+            }
+        }
+        vis[s1] = false; // Backtrack
+        s.erase(s1);
+        return false;
+    }
+
+public:
+    bool check(int n, int m, vector<vector<int>>bb) {
+       
+       vector<int>adj[n+1];
+      for(auto i:bb)//this was the problem.
+      {
+          int u=i[0];
+          int v=i[1];
+          adj[u].push_back(v);
+          adj[v].push_back(u);
+      }
+        vector<bool> vis(n + 1, false);
+        set<int>s;
+        for (int i = 1; i <= n; i++) {
+            
+            if (dfs(i, adj, vis, s,n)) {
+                return true; // If a Hamiltonian path is found, return true
+            }
+        }
+        return false; // If no Hamiltonian path is found, return false
+    }
+};
+ 
