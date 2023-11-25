@@ -1,0 +1,43 @@
+class Solution {
+  public:
+    int CheapestFLight(int n, vector<vector<int>>& flights, int src, int dst, int k)  {
+        // Code here
+        vector<pair<int,int>>adj[n+1];
+        for(auto it:flights)
+        {
+            adj[it[0]].push_back({it[1],it[2]});
+        }
+        queue<pair<int,pair<int,int>>>pq;
+        //stops,src,cost;
+        pq.push({0,{src,0}});
+        vector<int>v(n+1,1e9);
+        v[src]=0;
+        while(!pq.empty())
+        {
+            auto i=pq.front();
+            pq.pop();
+            int p=i.first;
+            int x=i.second.first;
+            int y=i.second.second;
+            if(p>k)
+            {
+                continue;
+            }
+            for(auto it:adj[x])
+            {
+                int nx=it.first;
+                int mx=it.second;
+                if(p<=k&&v[nx]>y+mx)
+                {
+                    pq.push({p+1,{nx,y+mx}});
+                    v[nx]=y+mx;
+                }
+            }
+        }
+        if(v[dst]==1e9){
+        return -1;
+            
+        }
+        return v[dst];
+    }
+};
