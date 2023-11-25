@@ -28,6 +28,10 @@ class Solution
                 int w=it[1];
                 if(w+wi<dis[v])
                 {
+                  if(dis[v]!=1e9)//find better solution so erase this.
+                   {
+                    p.erase({v,dis[v]});
+                   }
                    dis[v]=w+wi;
                    p.insert({v,w+wi});
                 }
