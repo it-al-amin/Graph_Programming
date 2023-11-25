@@ -1,0 +1,56 @@
+class Solution {
+  public:
+    vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+        // Code here
+        vector<pair<int,int>>adj[n+1];
+        for(auto it:edges)
+        {
+            adj[it[0]].push_back({it[1],it[2]});
+            adj[it[1]].push_back({it[0],it[2]});
+        }
+        priority_queue <pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> gq;
+        gq.push({0,1});
+        vector<int>des(n+1,1e9);
+        int parent[n+1];
+        des[1]=0;
+        for(int i=1;i<=n;i++)
+        {
+            parent[i]=i;
+        }
+        while(!gq.empty())
+        {
+            int node=gq.top().second;
+            int w=gq.top().first;
+            gq.pop();
+            for(auto it:adj[node])
+            {
+                int n1=it.first;
+                int w1=it.second;
+                if(w1+w<des[n1])
+                {
+                    des[n1]=w1+w;
+                    gq.push({w+w1,n1});
+                    parent[n1]=node;
+                }
+            }
+            
+        }
+       vector<int>path;
+        if(des[n]==1e9)
+        {
+            path.push_back(-1);
+            return path;
+        }
+        int node=n;
+        while(parent[node]!=node)
+        {
+            path.push_back(node);
+             node=parent[node];
+            
+             
+        }
+        path.push_back(1);
+        reverse(path.begin(),path.end());
+        return path;
+    }
+};
