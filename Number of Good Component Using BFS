@@ -1,0 +1,68 @@
+class Solution {
+    bool solve(vector<bool>&vis,int i,vector<vector<int>>& adj,int cnt[])
+    {
+       
+        queue<int>q;
+        set<int>p;
+        q.push(i);
+        p.insert(i);
+        while(!q.empty())
+        {
+            int node=q.front();
+            q.pop();
+            for(auto it:adj[node])
+            {
+                if(!vis[it])
+                {
+                    q.push(it);
+                    vis[it]=1;
+                    p.insert(it);
+                    
+                }
+            }
+        }
+        int sum=p.size()-1;
+        for(auto i:p)
+        {
+            if(cnt[i]<sum)
+            {
+                return 0;
+            }
+        }
+        
+        return 1;
+        
+        
+        
+    }
+  public:
+    int findNumberOfGoodComponent(int V, vector<vector<int>>& adj) {
+        // code here
+        int cnt[V+1];
+        for(int i=1;i<=V;i++)
+        {
+            cnt[i]=0;
+        }
+        for(int i=1;i<=V;i++)
+        {
+            for(auto j:adj[i])
+            {
+                if(j!=i){
+                 cnt[i]++;
+                }
+            }
+        }
+        int ans=0;
+        vector<bool>vis(V+1,0);
+        for(int i=1;i<=V;i++)
+        {
+            if(!vis[i])
+            {
+                if(solve(vis,i,adj,cnt))
+                {
+                   ans++; 
+                }
+            }
+        }
+        return ans;
+    }
