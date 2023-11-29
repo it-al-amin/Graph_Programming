@@ -63,17 +63,17 @@ class Solution
                 edges.push_back({wt,{i,adjNode}});
             }
         }
-        sort(edges.begin(),edges.end());
+        sort(edges.begin(),edges.end());//sort to take smaller cost first.
         int mnMST=0;
         DisjointSet ds(V);
         for(auto it:edges)
         {
             int w=it.first,u=it.second.first,v=it.second.second;
-            if(ds.findUltimateParent(u)!= ds.findUltimateParent(v))
+            if(ds.findUltimateParent(u)!= ds.findUltimateParent(v))//not component then add to wieght and do disjoint set by using union by size 
             {
                 list.push_back({u,v});
                 mnMST+=w;
-                ds.unionBySize(u,v);
+                ds.unionBySize(u,v);//add in disjoint set
             }
         }
         return mnMST;
