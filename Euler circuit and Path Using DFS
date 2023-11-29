@@ -1,0 +1,58 @@
+class Solution {
+  void DFS(int v, vector<bool>&visited,vector<int>adj[]) {
+        visited[v] = true;
+
+        for (int u : adj[v]) {
+            if (!visited[u]) {
+                DFS(u, visited,adj);
+            }
+        }
+    }
+    bool isConnected(int V, vector<int>adj[]) {
+        vector<bool> visited(V, false);
+
+        int startNode = -1;
+        for (int i = 0; i < V; ++i) {
+            if (!adj[i].empty()) {
+                startNode = i;
+                break;
+            }
+        }
+        if (startNode == -1) {
+            // The graph is empty.
+            return true;
+        }
+
+        DFS(startNode, visited,adj);
+
+        // Check if all non-zero degree vertices are visited
+        for (int i = 0; i < V; ++i) {
+            if (!adj[i].empty() && !visited[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+   
+public:
+	int isEulerCircuit(int V, vector<int>adj[]){
+	    // Code here
+	     if (!isConnected(V,adj)) {
+            return 0; // The graph is not connected, so it can't have an Eulerian path or circuit.
+        }
+
+        // Count vertices with odd degree
+        int oddDegreeCount = 0;
+        for (int i = 0; i < V; ++i) {
+            if (adj[i].size() % 2 != 0) {
+                ++oddDegreeCount;
+            }
+        }
+
+        // If count is 0, the graph has an Eulerian circuit
+        // If count is 2, the graph has an Eulerian path
+        // If count is greater than 2, the graph is not Eulerian
+        return (oddDegreeCount == 0) ? 2 : (oddDegreeCount == 2) ? 1 : 0;
+	    
+	}
+};
