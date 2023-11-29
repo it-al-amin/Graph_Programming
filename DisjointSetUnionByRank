@@ -1,0 +1,75 @@
+#include <bits/stdc++.h>
+using namespace std;
+class DisjointSet
+{
+
+    vector<int> rank, parent;
+
+public:
+    DisjointSet(int n)
+    {
+        rank.resize(n + 1, 0);
+        parent.resize(n + 1);
+
+        for (int i = 1; i <= n; i++)
+        {
+            parent[i] = i;
+        }
+    }
+    int findUltimateParent(int node)
+    {
+        if (node == parent[node])
+        {
+            return node;
+        }
+        return parent[node] = findUltimateParent(parent[node]); // store for future uses;
+    }
+    void unionByRank(int u, int v)
+    {
+        int ulP_u = findUltimateParent(u);
+        int ulP_v = findUltimateParent(v);
+        if (ulP_u == ulP_v) // same component;
+        {
+            return;
+        }
+        if (rank[ulP_u] < rank[ulP_v])
+        {
+            parent[ulP_u] = ulP_v; // CONNECT TO BIIGER RANK;
+        }
+        else if (rank[ulP_u] > rank[ulP_v])
+        {
+            parent[ulP_v] = ulP_u; // CONNECT TO BIIGER RANK;
+        }
+        else
+        {
+            parent[ulP_u] = ulP_v;
+            rank[ulP_u]++;
+        }
+    }
+};
+int main()
+{
+    DisjointSet ds(7);
+    ds.unionByRank(1, 2);
+    ds.unionByRank(2, 3);
+    ds.unionByRank(4, 5);
+    ds.unionByRank(6, 7);
+    ds.unionByRank(5, 6);
+    if (ds.findUltimateParent(1) == ds.findUltimateParent(7))
+    {
+        cout << "Same\n";
+    }
+    else
+    {
+        cout << "Not same\n";
+    }
+    ds.unionByRank(3, 7);
+    if (ds.findUltimateParent(1) == ds.findUltimateParent(7))
+    {
+        cout << "Same\n";
+    }
+    else
+    {
+        cout << "Not same\n";
+    }
+}
