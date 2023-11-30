@@ -1,0 +1,74 @@
+class DisjointSet{
+  vector<int>size,parent,rank;
+  public:
+  DisjointSet(int n)
+  {
+      size.resize(n,1);
+      rank.resize(n,0);
+      parent.resize(n);
+      for(int i=0;i<n;i++)
+      {
+          parent[i]=i;
+      }
+      
+  }
+  int findUlP(int u)
+  {
+      if(u==parent[u])
+      {
+          return u;
+      }
+      return parent[u]=findUlP(parent[u]);
+  }
+  void unionByRank(int u, int v)
+    {
+        int ulP_u = findUlP(u);
+        int ulP_v = findUlP(v);
+        if (ulP_u == ulP_v) // same component;
+        {
+            return;
+        }
+        if (rank[ulP_u] < rank[ulP_v])
+        {
+            parent[ulP_u] = ulP_v; // CONNECT TO BIIGER RANK;
+        }
+        else if (rank[ulP_u] > rank[ulP_v])
+        {
+            parent[ulP_v] = ulP_u; // CONNECT TO BIIGER RANK;
+        }
+        else
+        {
+            parent[ulP_u] = ulP_v;
+            rank[ulP_u]++;
+        }
+    }
+
+ 
+};
+class Solution {
+  public:
+    int maxRemove(vector<vector<int>>& stones, int n) {
+        // Code here
+        DisjointSet ds(20001);
+        for(auto it:stones)
+        {
+            int i=it[0],j=it[1]+1e4;//i=rowi, j=coli+row here row =1e4 connect same row or colunm that's why 1st connect row node to colounm node 
+            if(ds.findUlP(i)!=ds.findUlP(j)){
+              ds.unionByRank(i,j);
+            }
+        }
+        set<int>s;
+        for(auto it:stones)
+        {
+              
+              int ii=ds.findUlP(it[0]);
+              //cout<<ii<<" ";
+              s.insert(ii);
+         
+             
+        }
+        //cout<<endl;
+        return n-s.size();
+        
+    }
+};
