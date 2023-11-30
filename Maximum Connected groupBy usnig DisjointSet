@@ -1,0 +1,135 @@
+class DisjointSet{
+  public:
+  vector<int>size,parent;
+  DisjointSet(int n)
+  {
+      size.resize(n,1);
+      parent.resize(n);
+      for(int i=0;i<n;i++)
+      {
+          parent[i]=i;
+      }
+      
+  }
+  int findUlP(int u)
+  {
+      if(u==parent[u])
+      {
+          return u;
+      }
+      return parent[u]=findUlP(parent[u]);
+  }
+  void unionBySize(int u,int v)
+  {
+      int ulP_u=findUlP(u);
+      int ulP_v=findUlP(v);
+      if(ulP_u==ulP_v)
+      {
+          return;
+      }
+      if(size[ulP_u]<size[ulP_v])
+      {
+          size[ulP_v]+=size[ulP_u];
+          parent[ulP_u]=parent[ulP_v];
+      }
+      else
+      {
+          size[ulP_u]+=size[ulP_v];
+          parent[ulP_v]=parent[ulP_u]; 
+      }
+  }
+ int numConnectedCom(int u)//get size of total component or total connected node 
+ {
+   int ulP=findUlP(u);
+   return size[ulP];
+ }
+};
+class Solution {
+    
+    vector<int> a = {0, -1, 0, 1};
+    vector<int> b = {-1, 0, 1, 0};
+  vector<int> bfs(int i, int j,vector<vector<bool>>&vis, vector<vector<int>> &grid) {
+        int n = grid.size();
+        queue<pair<int, int>> q;
+        vector<int>ans;
+        ans.push_back(i*n+j);
+        q.push({i, j});
+        vis[i][j] = true;
+        while (!q.empty()) {
+            auto it= q.front();
+            int x=it.first;
+            int y=it.second;
+            q.pop();
+            for (int k = 0; k < 4; ++k) {
+                int nx = x + a[k];
+                int ny = y + b[k];
+
+                if (nx >= 0 && nx < n && ny >= 0 && ny < n && grid[nx][ny] && !vis[nx][ny]) {
+                    vis[nx][ny] = true;
+                    ans.push_back(nx*n+ny);//make a node and connect them using unionBySizeDisjointSet
+                    q.push({nx, ny});
+                }
+            }
+        }
+        return ans;
+        
+    }
+
+public:
+    int MaxConnection(vector<vector<int>> &grid) {
+        
+        int n = grid.size(),ans=0;
+        DisjointSet ds(n*n);
+        queue<pair<int, int>>q;
+        vector<vector<bool>> vis(n,vector<bool>(n, false));
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (!vis[i][j]&&grid[i][j]==1) {
+                   vector<int>v=bfs(i,j,vis,grid);
+                   for(int k=1;k<v.size();k++)
+                   {
+                       ds.unionBySize(i*n+j,v[k]);
+                   }
+                   ans=max(ans,ds.numConnectedCom(v[0]));
+                }
+                if(!grid[i][j])
+                {
+                    q.push({i,j});
+                }
+            }
+        }
+        //cout<<ans<<"\n";
+        if(q.empty())
+        {
+            return n*n;
+        }
+        while(!q.empty())
+        {
+            auto it= q.front();
+            int x=it.first;
+            int y=it.second;
+            q.pop();
+            set<int>s;
+            for(int i=0;i<4;i++)
+            {
+                int nx=x+a[i];
+                int ny=y+b[i];
+                if(nx>=0&&nx<n&&ny>=0&&ny<n)
+                {
+                    if(grid[nx][ny])
+                    {
+                        s.insert(ds.findUlP(nx*n+ny));//get dajecent ultimate parent
+                    }
+                }
+            }
+            int temp=1;
+            for(auto i:s)
+            {
+                temp+=ds.numConnectedCom(i);
+            }
+            ans=max(ans,temp);
+        }
+        
+        return ans;
+    }
+};
