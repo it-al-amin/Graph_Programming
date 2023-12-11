@@ -1,0 +1,62 @@
+class Solution {
+    int timer=0;
+    void dfs(int node,int parent,vector<bool>&vis,vector<bool>&mark,vector<int>adj[],int low[],int tin[])
+    {
+        vis[node]=1;
+        low[node]=tin[node]=timer;
+        timer++;
+        int c=0;
+        for(auto it:adj[node])
+        {
+            if(it==parent)
+            {
+                continue;
+            }
+            if(!vis[it])
+            {
+                dfs(it,node,vis,mark,adj,low,tin);
+                low[node]=min(low[node],low[it]);
+                if(low[it]>=tin[node]&&parent!=-1)
+                {
+                    mark[node]=1;//articulation point
+                }
+                c++;
+            }
+            else
+            {
+                 low[node]=min(low[node],tin[it]);
+            }
+        }
+        if(c>1&&parent==-1)
+        {
+            mark[node]=1;
+        }
+    }
+  public:
+    vector<int> articulationPoints(int V, vector<int>adj[]) {
+        // Code here
+        vector<bool>vis(V,0);
+        int low[V],tin[V];
+        vector<int>ans;
+        vector<bool>mark(V,0);
+      for(int i=0;i<V;i++)
+        {
+            if(!vis[i])
+            {
+                dfs(i,-1,vis,mark,adj,low,tin);
+            }
+        }
+        for(int i=0;i<V;i++)
+        {
+            if(mark[i])
+            {
+                ans.push_back(i);
+            }
+        }
+        if(ans.empty())
+        {
+            ans.push_back(-1);
+        }
+        return ans;
+    }
+};
